@@ -5,34 +5,65 @@
 #include <string>
 #include <vector>
 #include "mpi.h"
-#include "/usr/include/libcaf.h"
 
-class coarray<typename T>{
+
+#ifdef COMPILER_SUPPORTS_CAF_INTRINSICS
+	void caf_init(int *argc, char argv[]){
+		_caf_extensions_init();
+	}
+	void caf_finalize(int *argc, char argv[]){
+		_caf_extensions_finalize();
+	}
+	void opencoarrays_sync_all(){
+		_caf_extensions_sync_all();
+	}
+	void opencoarrays_error_stop(int32_t stop_code = -1){
+		_caf_extensions_error_stop();
+	}
+	void opencoarrays_co_broadcast(int a, int source_image, int stat, int errmsg, int errmsg_len){
+		_caf_extensions_co_broadcast();
+	}
+#else
+	void caf_init(int *argc, char argv[]){
+		_gfortran_caf_init();
+	}
+	void caf_finalize(int *argc, char argv[]){
+		_gfortran_caf_finalize();
+	}
+	void opencoarrays_sync_all(){
+		_gfortran_caf_sync_all();
+	}
+	void opencoarrays_error_stop(int32_t stop_code = -1){
+		_gfortran_caf_error_stop();
+	}
+	void opencoarrays_co_broadcast(int a, int source_image, int stat, int errmsg, int errmsg_len){
+		_gfortran_caf_co_broadcast();
+	}
+#endif
+
+// Returns the image number (MPI rank + 1)
+int this_image();
+
+// Returns the total number of images
+int num_images();
+
+// Halt the execution of all images
+void error_stop(int32_t stop_code = -1);
+
+// Impose a global execution barrier
+void sync_all();
+
+
+template <class T >
+class coarray{
 public:
-	
-	int this_image(){
-		int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, &image_num);
-		if (ierr /= 0) error_stop();
-		return image_num + 1;
-	}
-
-	int num_images(){
-		int ierr = MPI_Comm_size(CACPP_COMM_WORLD, &num_images)
-		if(ierr /= 0) error_stop();
-		return &num_images
-
-	};
-
-	void error_stop(int_32_t stop_code = -1){
-		opencoarrays_error_stop(stop_code)
-	}
-
-	void sync_all(){
-		opencoarrays_sync_all()
-	}
-
-
+	typedef T data_type;
+    coarray();
+    ~coarray();
+    
 private:
+
+
 
 };
 /*
