@@ -1,11 +1,17 @@
 #ifndef CAF_C_H 
-#define CAF_C_H 
+#define CAF_C_H
 
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "mpi.h"
+#include <mpi.h>
 
+extern "C" {
+	/* Unbuffering C */
+	void ersetb(void){
+		setbuf(stdout,NULL); /* set output to unbuffered */
+	}	
+}
 
 #ifdef COMPILER_SUPPORTS_CAF_INTRINSICS
 	void caf_init(int *argc, char argv[]){
@@ -14,7 +20,7 @@
 	void caf_finalize(int *argc, char argv[]){
 		_caf_extensions_finalize();
 	}
-	void opencoarrays_sync_all(){
+	void opencoarrays_sync_all(int stat, char[] errmsg, int unused){
 		_caf_extensions_sync_all();
 	}
 	void opencoarrays_error_stop(int32_t stop_code = -1){
@@ -25,12 +31,12 @@
 	}
 #else
 	void caf_init(int *argc, char argv[]){
-		_gfortran_caf_init();
+		_gfortran_caf_init(int *argc, char argv[]);
 	}
-	void caf_finalize(int *argc, char argv[]){
+	void caf_finalize(){
 		_gfortran_caf_finalize();
 	}
-	void opencoarrays_sync_all(){
+	void opencoarrays_sync_all(int stat, char[] errmsg, int unused){
 		_gfortran_caf_sync_all();
 	}
 	void opencoarrays_error_stop(int32_t stop_code = -1){
@@ -60,9 +66,10 @@ public:
 	typedef T data_type;
     coarray();
     ~coarray();
-    
-private:
+    data_type get_from_image(int index);
 
+private:
+	data_type Data;
 
 
 };
