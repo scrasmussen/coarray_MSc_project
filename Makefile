@@ -7,7 +7,7 @@ SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
 
 default: all
 
-all: libcoarray_cpp.so preprocess
+all: libcoarray_cpp.so preprocess /home/jerome/OpenCoarrays-2.7.1/src/libcaf.h
 	gcc -L${WORKDIR} -Wall -Wextra -pedantic -o coarray_cpp.so ${SRCFILE} -lcoarray_cpp
 
 preprocess:

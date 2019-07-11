@@ -1,0 +1,123 @@
+rm -f /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp.tmp
+sed -e 's/<<</.get_from(/g; s/>>>/)/g' /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp > /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp.tmp
+diff /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp.tmp || true
+mv /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp.bkp
+mv /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp.tmp /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
+gcc -L/home/jerome/coarray_MSc_project -Wall -Wextra -pedantic -o coarray_cpp.so /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp -lcoarray_cpp
+In file included from /home/jerome/OpenCoarrays-2.7.1/src/libcaf.h:35,
+                 from /home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:14,
+                 from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/OpenCoarrays-2.7.1/src/libcaf-gfortran-descriptor.h:71:24: warning: ISO C++ forbids flexible array member ‘dim’ [-Wpedantic]
+   71 |   descriptor_dimension dim[];
+      |                        ^~~
+In file included from /home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:14,
+                 from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/OpenCoarrays-2.7.1/src/libcaf.h:236:31: error: expected ‘)’ before ‘,’ token
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                        ~      ^
+      |                               )
+/home/jerome/OpenCoarrays-2.7.1/src/libcaf.h:236:33: error: variable or field ‘caf_register_t’ declared void
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                                 ^~~~~~~~~~~~~~
+/home/jerome/OpenCoarrays-2.7.1/src/libcaf.h:236:61: error: expected initializer before ‘*’ token
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                                                             ^
+In file included from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h: In function ‘void opencoarrays_get(caf_token_t, size_t, int, gfc_descriptor_t*, caf_vector_t*, gfc_descriptor_t*, int, int, bool)’:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:41:66: error: expected ‘)’ before ‘__attribute__’
+   41 |  _gfortran_caf_get(token, offset, image_index, *src , *src_vector __attribute__ ((unused)), *dest, src_kind, dst_kind, mrt)
+      |                   ~                                              ^~~~~~~~~~~~~~
+      |                                                                  )
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:41:2: error: ‘_gfortran_caf_get’ was not declared in this scope; did you mean ‘_gfortran_caf_init’?
+   41 |  _gfortran_caf_get(token, offset, image_index, *src , *src_vector __attribute__ ((unused)), *dest, src_kind, dst_kind, mrt)
+      |  ^~~~~~~~~~~~~~~~~
+      |  _gfortran_caf_init
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp: At global scope:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:5:26: warning: ISO C++ forbids declaration of ‘main’ with no type [-Wpedantic]
+    5 | main(int argc, char &argv){
+      |                          ^
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:5:1: warning: second argument of ‘int main(int, char&)’ should be ‘char **’ [-Wmain]
+    5 | main(int argc, char &argv){
+      | ^~~~
+In file included from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h: In instantiation of ‘class coarraycpp::coarray<char [100]>’:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:7:41:   required from here
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:76:8: error: function returning an array
+   76 |      T get_from(int index);
+      |        ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp: In function ‘int main(int, char&)’:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:9:130: error: no match for ‘operator=’ (operand types are ‘coarraycpp::coarray<char [100]>’ and ‘std::__cxx11::basic_string<char>’)
+    9 |   greeting = "Greetings from image " + std::to_string(coarraycpp::this_image()) +" of " + std::to_string(coarraycpp::num_images());
+      |                                                                                                                                  ^
+In file included from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:74:8: note: candidate: ‘void coarraycpp::coarray<T>::operator=(const data_type&) [with T = char [100]; coarraycpp::coarray<T>::data_type = char [100]]’
+   74 |   void operator=(const data_type& value);
+      |        ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:74:35: note:   no known conversion for argument 1 from ‘std::__cxx11::basic_string<char>’ to ‘const char (&)[100]’
+   74 |   void operator=(const data_type& value);
+      |                  ~~~~~~~~~~~~~~~~~^~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:75:8: note: candidate: ‘void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>&) [with T = char [100]]’
+   75 |   void operator=(const coarray<T>& coarray);
+      |        ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:75:36: note:   no known conversion for argument 1 from ‘std::__cxx11::basic_string<char>’ to ‘const coarraycpp::coarray<char [100]>&’
+   75 |   void operator=(const coarray<T>& coarray);
+      |                  ~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:10:24: error: too few arguments to function ‘void coarraycpp::sync_all(int, char*, int)’
+   10 |   coarraycpp::sync_all();
+      |                        ^
+In file included from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:3:
+/home/jerome/coarray_MSc_project/C++_Test_Cases/../coarray_cpp.h:66:7: note: declared here
+   66 |  void sync_all(int stat, char errmsg[], int unused);
+      |       ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:13:29: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   13 |       std::cout << greeting.get_from(image) << std::endl;
+      |                             ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:16:20: error: ‘min’ was not declared in this scope; did you mean ‘std::min’?
+   16 |     for(image = 2; min(coarraycpp::num_images(), max_single_digit); image++){
+      |                    ^~~
+      |                    std::min
+In file included from /usr/include/c++/9.1.0/bits/char_traits.h:39,
+                 from /usr/include/c++/9.1.0/ios:40,
+                 from /usr/include/c++/9.1.0/ostream:38,
+                 from /usr/include/c++/9.1.0/iostream:39,
+                 from /home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:1:
+/usr/include/c++/9.1.0/bits/stl_algobase.h:246:5: note: ‘std::min’ declared here
+  246 |     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+      |     ^~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:21: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                     ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:59: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                           ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:97: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                 ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:135: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                       ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:173: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                                                             ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:211: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                                                                                                   ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:249: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                                                                                                                                         ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:287: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                                                                                                                                                                               ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:17:325: error: ‘class coarraycpp::coarray<char [100]>’ has no member named ‘get_from’
+   17 |       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      |                                                                                                                                                                                                                                                                                                                                     ^~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:15:9: warning: unused variable ‘expected_location’ [-Wunused-variable]
+   15 |     int expected_location=23,max_single_digit=9;
+      |         ^~~~~~~~~~~~~~~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:5:10: warning: unused parameter ‘argc’ [-Wunused-parameter]
+    5 | main(int argc, char &argv){
+      |      ~~~~^~~~
+/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp:5:22: warning: unused parameter ‘argv’ [-Wunused-parameter]
+    5 | main(int argc, char &argv){
+      |                ~~~~~~^~~~
+make: *** [Makefile:11: all] Error 1
