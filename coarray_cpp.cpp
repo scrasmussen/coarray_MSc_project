@@ -1,5 +1,4 @@
 #include "coarray_cpp.h"
-//#include "/usr/include/libcaf.h"
 
 opencoarrays_caf_init();
 
@@ -39,5 +38,6 @@ void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
 
 template<class T>
 T coarraycpp::coarray<T>::get_from(int image_index){
+	opencoarrays_get(caf_token_t token, size_t offset, int image_index, gfc_descriptor_t *src, caf_vector_t *src_vector, gfc_descriptor_t *dest, int src_kind, int dst_kind, bool may_require_tmp, int *stat);
 	return NULL;
 };
