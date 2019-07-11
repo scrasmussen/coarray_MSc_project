@@ -1,0 +1,93 @@
+g++ -L/lib -c -Wall -Werror -fpic coarray_cpp.cpp -lcaf_mpi
+In file included from coarray_cpp.h:14,
+                 from coarray_cpp.cpp:1:
+/usr/include/libcaf.h:236:31: error: expected ‘)’ before ‘,’ token
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                        ~      ^
+      |                               )
+/usr/include/libcaf.h:236:33: error: variable or field ‘caf_register_t’ declared void
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                                 ^~~~~~~~~~~~~~
+/usr/include/libcaf.h:236:61: error: expected initializer before ‘*’ token
+  236 | void PREFIX (register) (size_t, caf_register_t, caf_token_t *,
+      |                                                             ^
+In file included from coarray_cpp.cpp:1:
+coarray_cpp.h:21:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   21 |  typedef enum caf_register_t;
+      |  ^~~~~~~
+coarray_cpp.h:22:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   22 |  typedef enum caf_deregister_t;
+      |  ^~~~~~~
+coarray_cpp.h:25:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   25 |  typedef struct caf_teams_list;
+      |  ^~~~~~~
+coarray_cpp.h:26:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   26 |  typedef struct caf_used_teams_list;
+      |  ^~~~~~~
+coarray_cpp.h:27:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   27 |  typedef struct caf_vector_t;
+      |  ^~~~~~~
+coarray_cpp.h:28:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   28 |  typedef enum caf_array_ref_t;
+      |  ^~~~~~~
+coarray_cpp.h:29:2: error: ‘typedef’ was ignored in this declaration [-Werror]
+   29 |  typedef struct caf_reference_t;
+      |  ^~~~~~~
+In file included from coarray_cpp.cpp:1:
+coarray_cpp.h: In function ‘void opencoarrays_get(caf_token_t, size_t, int, gfc_descriptor_t*, caf_vector_t*, gfc_descriptor_t*, int, int, bool, int*)’:
+coarray_cpp.h:114:29: error: variable or field ‘_gfortran_caf_caf_get’ declared void
+  114 |  void _gfortran_caf_caf_get(token, offset, image_index, src, src_vector, dest, src_kind, dst_kind, may_require_tmp, stat);
+      |                             ^~~~~
+coarray_cpp.cpp: At global scope:
+coarray_cpp.cpp:4:24: error: expected constructor, destructor, or type conversion before ‘;’ token
+    4 | opencoarrays_caf_init();
+      |                        ^
+coarray_cpp.cpp:26:83: error: converting to non-pointer type ‘int’ from NULL [-Werror=conversion-null]
+   26 | void coarraycpp::sync_all(int stat = NULL, char errmsg[] = NULL, int unused = NULL){
+      |                                                                                   ^
+coarray_cpp.cpp:26:83: error: converting to non-pointer type ‘int’ from NULL [-Werror=conversion-null]
+coarray_cpp.cpp: In function ‘void coarraycpp::sync_all(int, char*, int)’:
+coarray_cpp.cpp:27:24: error: invalid conversion from ‘int’ to ‘int*’ [-fpermissive]
+   27 |  opencoarrays_sync_all(stat, errmsg, unused);
+      |                        ^~~~
+      |                        |
+      |                        int
+In file included from coarray_cpp.cpp:1:
+coarray_cpp.h:100:33: note:   initializing argument 1 of ‘void opencoarrays_sync_all(int*, char*, int)’
+  100 | void opencoarrays_sync_all(int *stat, char errmsg[], int unused){
+      |                            ~~~~~^~~~
+coarray_cpp.cpp: At global scope:
+coarray_cpp.cpp:31:6: error: no declaration matches ‘void coarraycpp::coarray<T>::operator=(const data_type&)’
+   31 | void coarraycpp::coarray<T>::operator=(const data_type& value){
+      |      ^~~~~~~~~~
+In file included from coarray_cpp.cpp:1:
+coarray_cpp.h:142:8: note: candidates are: ‘using coarraycpp::coarray<T>::operator=’
+  142 |  class coarray{
+      |        ^~~~~~~
+coarray_cpp.h:148:8: note:                 ‘void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>&)’
+  148 |   void operator=(coarray<T>& coarray);
+      |        ^~~~~~~~
+coarray_cpp.h:147:8: note:                 ‘void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>::data_type&)’
+  147 |   void operator=(data_type& value);
+      |        ^~~~~~~~
+coarray_cpp.h:142:8: note: ‘class coarraycpp::coarray<T>’ defined here
+  142 |  class coarray{
+      |        ^~~~~~~
+coarray_cpp.cpp:36:6: error: no declaration matches ‘void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>&)’
+   36 | void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
+      |      ^~~~~~~~~~
+In file included from coarray_cpp.cpp:1:
+coarray_cpp.h:142:8: note: candidates are: ‘using coarraycpp::coarray<T>::operator=’
+  142 |  class coarray{
+      |        ^~~~~~~
+coarray_cpp.h:148:8: note:                 ‘void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>&)’
+  148 |   void operator=(coarray<T>& coarray);
+      |        ^~~~~~~~
+coarray_cpp.h:147:8: note:                 ‘void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>::data_type&)’
+  147 |   void operator=(data_type& value);
+      |        ^~~~~~~~
+coarray_cpp.h:142:8: note: ‘class coarraycpp::coarray<T>’ defined here
+  142 |  class coarray{
+      |        ^~~~~~~
+cc1plus: all warnings being treated as errors
+make: *** [Makefile:28: coarray_cpp.o] Error 1

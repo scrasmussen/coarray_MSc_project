@@ -21,7 +21,8 @@ clean:
 	rm -rf *.o RunMe
 
 libcoarray_cpp.so: coarray_cpp.o
+	rm -f libcoarray_cpp.so
 	${CC} -shared -o libcoarray_cpp.so coarray_cpp.o
 
 coarray_cpp.o: ${CPPLIBFILES}
-	${CC} -E -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
+	${CC} -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
