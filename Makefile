@@ -25,4 +25,4 @@ libcoarray_cpp.so: coarray_cpp.o
 
 
 coarray_cpp.o: ${CPPLIBFILES}
-	gcc -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
+	gcc -E -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
