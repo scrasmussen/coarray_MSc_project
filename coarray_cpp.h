@@ -11,7 +11,7 @@ int *image_num;
 int *num_image;
 
 extern "C" {
-	#include "/home/jerome/OpenCoarrays-2.7.1/src/libcaf.h"
+	#include "/usr/include/libcaf.h"
 	/* Unbuffering C */
 	void ersetb(void){
 		setbuf(stdout,NULL); /* set output to unbuffered */

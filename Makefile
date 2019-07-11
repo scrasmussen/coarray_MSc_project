@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 MPICC=mpich
 LIBFILE=/lib/libcaf_mpi.so
 CPPLIBFILE=coarray_cpp.cpp
@@ -7,8 +7,8 @@ SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
 
 default: all
 
-all: libcoarray_cpp.so preprocess /home/jerome/OpenCoarrays-2.7.1/src/libcaf.h
-	gcc -L${WORKDIR} -Wall -Wextra -pedantic -o coarray_cpp.so ${SRCFILE} -lcoarray_cpp
+all: libcoarray_cpp.so preprocess /usr/include/libcaf.h
+	${CC} -L${WORKDIR} -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -lcoarray_cpp
 
 preprocess:
 	rm -f ${SRCFILE}.tmp
@@ -21,8 +21,7 @@ clean:
 	rm -rf *.o RunMe
 
 libcoarray_cpp.so: coarray_cpp.o
-	gcc -shared -o libcoarray_cpp.so coarray_cpp.o
-
+	${CC} -shared -o libcoarray_cpp.so coarray_cpp.o
 
 coarray_cpp.o: ${CPPLIBFILES}
-	gcc -E -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
+	${CC} -E -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
