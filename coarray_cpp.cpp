@@ -1,6 +1,8 @@
 #include "coarray_cpp.h"
 //#include "/usr/include/libcaf.h"
 
+opencoarrays_caf_init(argc,argv);
+
 // Returns the image number (MPI rank + 1)
 int this_image(){
 	int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, image_num);
@@ -37,5 +39,5 @@ void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
 
 template<class T>
 T coarraycpp::coarray<T>::get_from(int index){
-	
+
 };
