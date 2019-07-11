@@ -38,7 +38,7 @@ extern "C" {
 	void _gfortran_caf_this_image(int distance);
 	void _gfortran_caf_num_images(int distance, int failed);
 	
-	void _gfortran_caf_register(size_t size, caf_register_t type, caf_token_t *token, int *stat,gfc_descriptor_t *desc, int *stat, char *errmsg, size_t errmsg_len);
+	void _gfortran_caf_register(size_t size, caf_register_t type, caf_token_t *token,gfc_descriptor_t *desc, int *stat, char *errmsg, size_t errmsg_len);
 	void _gfortran_caf_deregister(caf_token_t *token, int *stat, char *errmsg, size_t errmsg_len);
 	
 	void _gfortran_caf_caf_get(caf_token_t token, size_t offset, int image_index, gfc_descriptor_t *src, caf_vector_t *src_vector, gfc_descriptor_t *dest, int src_kind, int dst_kind, bool may_require_tmp, int *stat);
@@ -48,8 +48,6 @@ extern "C" {
 	void _gfortran_caf_get_by_ref(caf_token_t token, int image_index, gfc_descriptor_t *dst, caf_reference_t *refs, int dst_kind, int src_kind, bool may_require_tmp, bool dst_reallocatable, int *stat, int src_type);
 	void _gfortran_caf_send_by_ref(caf_token_t token, int image_index, gfc_descriptor_t *src, caf_reference_t *refs, int dst_kind, int src_kind, bool may_require_tmp, bool dst_reallocatable, int *stat, int dst_type);
 	void _gfortran_caf_sendget_by_ref(caf_token_t dst_token, int dst_image_index, caf_reference_t *dst_refs, caf_token_t src_token, int src_image_index, caf_reference_t *src_refs, int dst_kind, int src_kind, bool may_require_tmp, int *dst_stat, int *src_stat, int dst_type, int src_type);
-	
-	void _gfortran_caf_is_present(caf_token_t token, int image_index, gfc_reference_t *ref);
 	
 	void _gfortran_caf_co_broadcast(gfc_descriptor_t *a, int source_image, int *stat, char *errmsg, size_t errmsg_len);
 	void _gfortran_caf_co_max(gfc_descriptor_t *a, int result_image, int *stat, char *errmsg, int a_len, size_t errmsg_len);
@@ -99,7 +97,7 @@ void opencoarrays_caf_init(){
 	_gfortran_caf_init(NULL, NULL);
 }
 
-void opencoarrays_sync_all(int stat, char errmsg[], int unused){
+void opencoarrays_sync_all(int *stat, char errmsg[], int unused){
 	_gfortran_caf_sync_all(stat, errmsg, unused);
 }
 
@@ -108,19 +106,19 @@ void opencoarrays_error_stop(int32_t stop_code = -1){
 	_gfortran_caf_error_stop(stop_code);
 }
 
-void opencoarrays_co_broadcast(int a, int source_image, int stat, int errmsg, int errmsg_len){
+void opencoarrays_co_broadcast(gfc_descriptor_t *a, int source_image, int *stat, char *errmsg, size_t errmsg_len){
 	_gfortran_caf_co_broadcast(a, source_image, stat, errmsg, errmsg_len);
 }
 
-void opencoarrays_get(caf_token_t token, size_t offset, int image_index, gfc_descriptor_t *src , caf_vector_t *src_vector __attribute__ ((unused)), gfc_descriptor_t *dest, int src_kind, int dst_kind, bool mrt){
-	_gfortran_caf_get(token, offset, image_index, *src , *src_vector __attribute__ ((unused)), *dest, src_kind, dst_kind, mrt)
+void opencoarrays_get(caf_token_t token, size_t offset, int image_index, gfc_descriptor_t *src, caf_vector_t *src_vector, gfc_descriptor_t *dest, int src_kind, int dst_kind, bool may_require_tmp, int *stat){
+	void _gfortran_caf_caf_get(token, offset, image_index, src, src_vector, dest, src_kind, dst_kind, may_require_tmp, stat);
 }
 
 namespace coarraycpp {
 
 	/* Links to the OpenCoarray Library */
-	void caf_init(int *argc, char argv[]){
-		_gfortran_caf_init(argc, argv);
+	void caf_init(){
+		opencoarrays_caf_init();
 		CACPP_COMM_WORLD = CAF_COMM_WORLD;
 	}
 
@@ -146,9 +144,9 @@ namespace coarraycpp {
 		typedef T data_type;
 	    coarray();
 	    ~coarray();
-		void operator=(const data_type& value);
-		void operator=(const coarray<T>& coarray);
-	    T get_from(int index);
+		void operator=(data_type& value);
+		void operator=(coarray<T>& coarray);
+	    T get_from(int image_index);
 	private:
 		data_type Data;
 	};

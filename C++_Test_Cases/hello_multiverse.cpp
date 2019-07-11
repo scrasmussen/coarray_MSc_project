@@ -12,8 +12,8 @@ main(int argc, char &argv){
     for(image = 1; image < coarraycpp::num_images(); image++){
       std::cout << greeting.get_from(image) << std::endl;
     }
-    int expected_location=23,max_single_digit=9;
-    for(image = 2; min(coarraycpp::num_images(), max_single_digit); image++){
+    int max_single_digit=9;
+    for(image = 2; std::min(coarraycpp::num_images(), max_single_digit); image++){
       if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
         std::cout << "Test failed.";
         exit(1);

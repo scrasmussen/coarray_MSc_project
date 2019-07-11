@@ -1,7 +1,7 @@
 #include "coarray_cpp.h"
 //#include "/usr/include/libcaf.h"
 
-opencoarrays_caf_init(argc,argv);
+opencoarrays_caf_init();
 
 // Returns the image number (MPI rank + 1)
 int this_image(){
@@ -23,7 +23,7 @@ void coarraycpp::error_stop(int32_t stop_code){
 }
 
 // Impose a global execution barrier
-void coarraycpp::sync_all(int stat, char errmsg[], int unused){
+void coarraycpp::sync_all(int stat = NULL, char errmsg[] = NULL, int unused = NULL){
 	opencoarrays_sync_all(stat, errmsg, unused);
 }
 
@@ -38,6 +38,6 @@ void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
 }
 
 template<class T>
-T coarraycpp::coarray<T>::get_from(int index){
-
+T coarraycpp::coarray<T>::get_from(int image_index){
+	return NULL;
 };
