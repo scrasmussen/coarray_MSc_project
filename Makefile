@@ -3,12 +3,17 @@ MPICC=mpich
 LIBFILE=/lib/libcaf_mpi.so
 CPPLIBFILE=coarray_cpp.cpp
 WORKDIR=/home/jerome/coarray_MSc_project
-SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
+SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_world.cpp
+
+# run `mpic++ -show` and enter that result, minus the g++
+MPIOPT=-I/opt/mpich/include -L/opt/mpich/lib -lmpicxx -Wl,-rpath -Wl,/opt/mpich/lib -Wl,--enable-new-dtags -lmpi
+# this is the path to the directory where libcaf_mpi.so is installed
+COPT=/lib
 
 default: all
 
-all: libcoarray_cpp.so preprocess /usr/include/libcaf.h
-	${CC} -L${WORKDIR} -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -lcoarray_cpp
+all: libcoarray_cpp.so preprocess
+	${CC} -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp
 
 preprocess:
 	rm -f ${SRCFILE}.tmp
@@ -21,8 +26,10 @@ clean:
 	rm -rf *.o RunMe
 
 libcoarray_cpp.so: coarray_cpp.o
-	rm -f libcoarray_cpp.so
-	${CC} -shared -o libcoarray_cpp.so coarray_cpp.o
+	${CC} -shared coarray_cpp.o -L/lib -lcaf_mpi -o libcoarray_cpp.so
 
-coarray_cpp.o: ${CPPLIBFILE} /usr/include/libcaf.h
-	${CC} -L/lib -c -Wall -Werror -fpic ${CPPLIBFILE} -lcaf_mpi
+coarray_cpp.o: ${CPPLIBFILE}
+	${CC} -c -Wall -g -pedantic -fPIC ${CPPLIBFILE} -o coarray_cpp.o
+
+cleanlib:
+	rm -rf *.o *.so
