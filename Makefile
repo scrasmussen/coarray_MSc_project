@@ -13,7 +13,7 @@ COPT=/lib
 default: all
 
 all: libcoarray_cpp.so preprocess
-	${CC} -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp
+	${CC} -g -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp -lcaf_mpi
 
 preprocess:
 	rm -f ${SRCFILE}.tmp

@@ -1,14 +1,14 @@
 #include "coarray_cpp.h"
 
 // Returns the image number (MPI rank + 1)
-int this_image(){
+int coarraycpp::this_image(){
 	int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, image_num);
 	if (ierr != 0) coarraycpp::error_stop(-1);
 	return (*image_num+1);
 }
 
 // Returns the total number of images
-int num_images(){
+int coarraycpp::num_images(){
 	int ierr = MPI_Comm_size(CACPP_COMM_WORLD, num_image);
 	if(ierr != 0) coarraycpp::error_stop(-1);
 	return *num_image;
