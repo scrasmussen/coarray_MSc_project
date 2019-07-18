@@ -2,20 +2,22 @@
 
 // Returns the image number (MPI rank + 1)
 int coarraycpp::this_image(){
-	int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, image_num);
+	int image_num;
+	int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, &image_num);
 	if (ierr != 0) coarraycpp::error_stop(-1);
-	return (*image_num+1);
+	return (image_num+1);
 }
 
 // Returns the total number of images
 int coarraycpp::num_images(){
-	int ierr = MPI_Comm_size(CACPP_COMM_WORLD, num_image);
+	int num_image;
+	int ierr = MPI_Comm_size(CACPP_COMM_WORLD, &num_image);
 	if(ierr != 0) coarraycpp::error_stop(-1);
-	return *num_image;
+	return num_image;
 }
 
-void coarraycpp::caf_init(){
-	opencoarrays_caf_init();
+void coarraycpp::caf_init(int *argc, char ***argv){
+	opencoarrays_caf_init(argc, argv);
 	CACPP_COMM_WORLD = CAF_COMM_WORLD;
 }
 
@@ -28,22 +30,44 @@ void coarraycpp::error_stop(int32_t stop_code){
 }
 
 // Impose a global execution barrier
-void coarraycpp::sync_all(int *stat = NULL, char errmsg[] = NULL, int unused = NULL){
-	opencoarrays_sync_all(stat, errmsg, unused);
+void coarraycpp::sync_all(int *stat, char errmsg[], size_t errmsg_len){
+	opencoarrays_sync_all(stat, errmsg, errmsg_len);
 }
 
-template<class T>
-void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>::data_type& value){
-	this.value = value;
-}
+/* ############## COARRAY CLASS ############## */
 
 template<class T>
-void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>& coarray){
-	this.value = coarray.value;
+coarraycpp::coarray<T>::coarray(){
+	size_t errmsg_len;
+	char *errmsg;
+	this.size = sizeof(T);
+	this.type = CAF_REGTYPE_COARRAY_ALLOC;
+	_gfortran_caf_register(this.size, this.type, &this.token, &this.descriptor, &this.stat, errmsg, errmsg_len);
 }
 
 // template<class T>
-// T coarraycpp::coarray<T>::get_from(int image_index){
-// 	opencoarrays_get(caf_token_t token, size_t offset, int image_index, gfc_descriptor_t *src, caf_vector_t *src_vector, gfc_descriptor_t *dest, int src_kind, int dst_kind, bool may_require_tmp, int *stat);
-// 	return NULL;
+// void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>::data_type& value){
+	
+// }
+
+// template<class T>
+// void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>& coarray){
+	
+// }
+
+template<class T>
+data_type& coarraycpp::coarray<T>::get_from(int image_index){
+	caf_token_t token;
+	size_t offset;
+	gfc_descriptor_t src, dest;
+	caf_vector_t src_vector;
+	int src_kind, dst_kind;
+	bool may_require_tmp = true;
+	opencoarrays_get(token, offset,image_index,&src,&src_vector,&this.descriptor,src_kind ,dst_kind, may_require_tmp, this.stat);
+	return NULL;
+}
+
+// int get_int(int src, int dest, int image_index, int* offset, bool mrt){
+// 	std::cout << "Remote access of coarrays not yet supported" << std::endl;
+// 	error_stop();
 // }

@@ -3,7 +3,7 @@ MPICC=mpich
 LIBFILE=/lib/libcaf_mpi.so
 CPPLIBFILE=coarray_cpp.cpp
 WORKDIR=/home/jerome/coarray_MSc_project
-SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_world.cpp
+SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
 
 # run `mpic++ -show` and enter that result, minus the g++
 MPIOPT=-I/opt/mpich/include -L/opt/mpich/lib -lmpicxx -Wl,-rpath -Wl,/opt/mpich/lib -Wl,--enable-new-dtags -lmpi

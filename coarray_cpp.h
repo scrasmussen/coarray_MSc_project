@@ -2,13 +2,12 @@
 #define CAF_CPP_H
 
 #include <mpi.h>
+#include <iostream>
 #include <stdio.h>
 #include <string>
 #include <vector>
 
 MPI_Comm CACPP_COMM_WORLD;
-int *image_num;
-int *num_image;
 
 extern "C" {
 	#include "libcaf-gfortran-descriptor.h"
@@ -16,8 +15,30 @@ extern "C" {
 	void ersetb(void) { setbuf(stdout, NULL); /* set output to unbuffered */ }
 
 /* TYPES IMPORT */
-	// typedef enum caf_register_t;
-	typedef void* caf_token_t;
+	/* indicates which kind of coarray variable should be registered. */
+	typedef enum caf_register_t {
+		CAF_REGTYPE_COARRAY_STATIC,
+		CAF_REGTYPE_COARRAY_ALLOC,
+		CAF_REGTYPE_LOCK_STATIC,
+		CAF_REGTYPE_LOCK_ALLOC,
+		CAF_REGTYPE_CRITICAL,
+		CAF_REGTYPE_EVENT_STATIC,
+		CAF_REGTYPE_EVENT_ALLOC,
+		CAF_REGTYPE_COARRAY_ALLOC_REGISTER_ONLY,
+		CAF_REGTYPE_COARRAY_ALLOC_ALLOCATE_ONLY
+	}caf_register_t;
+
+	/* Allows to specify type of deregistration */
+	typedef enum caf_deregister_t {
+		CAF_DEREGTYPE_COARRAY_DEREGISTER,
+		/* Only allowed for allocatable components in derived type coarrays */
+		CAF_DEREGTYPE_COARRAY_DEALLOCATE_ONLY
+	}caf_deregister_t;
+
+	/* Type void * on compiler side, can be any type on lib side */
+	typedef void *caf_token_t;
+
+	/*  */
 	typedef struct caf_vector_t {
 		size_t nvec;
 		union {
@@ -32,7 +53,52 @@ extern "C" {
 	} caf_vector_t;
 
 	// typedef void *caf_team_t;
-	// typedef struct caf_reference_t;
+
+	/* References to remote components of a derived type.
+   Keep in sync with gcc/libgfortran/caf/libcaf.h.  */
+	typedef struct caf_reference_t {
+		/* A pointer to the next ref or NULL.  */
+		struct caf_reference_t *next;
+		/* The type of the reference.  */
+		/* caf_ref_type_t, replaced by int to allow specification in fortran FE.  */
+		int type;
+		/* The size of an item referenced in bytes.  I.e. in an array ref this is
+		the factor to advance the array pointer with to get to the next item.
+		For component refs this gives just the size of the element referenced.  */
+		size_t item_size;
+		union {
+			struct {
+				/* The offset (in bytes) of the component in the derived type.  */
+				ptrdiff_t offset;
+				/* The offset (in bytes) to the caf_token associated with this
+				component.  NULL, when not allocatable/pointer ref.  */
+				ptrdiff_t caf_token_offset;
+			} c;
+			struct {
+			/* The mode of the array ref.  See CAF_ARR_REF_*.  */
+			/* caf_array_ref_t, replaced by unsigend char to allow specification in
+			fortran FE.  */
+				unsigned char mode[GFC_MAX_DIMENSIONS];
+				/* The type of a static array.  Unset for array's with descriptors.  */
+				int static_array_type;
+				/* Subscript refs (s) or vector refs (v).  */
+				union {
+					struct {
+						/* The start and end boundary of the ref and the stride.  */
+						ptrdiff_t start, end, stride;
+					} s;
+					struct {
+						/* nvec entries of kind giving the elements to reference.  */
+						void *vector;
+						/* The number of entries in vector.  */
+						size_t nvec;
+						/* The integer kind used for the elements in vector.  */
+						int kind;
+					} v;
+				} dim[GFC_MAX_DIMENSIONS];
+			} a;
+		} u;
+	} caf_reference_t;
 
 /* GLOBAL VARIABLE IMPORT */
 	MPI_Comm CAF_COMM_WORLD;
@@ -44,9 +110,9 @@ extern "C" {
 	void _gfortran_caf_this_image(int distance);
 	void _gfortran_caf_num_images(int distance, int failed);
 
-	// void _gfortran_caf_register(size_t size, caf_register_t type,
-	// 	caf_token_t *token, gfc_descriptor_t *desc,
-	// 	int *stat, char *errmsg, size_t errmsg_len);
+	void _gfortran_caf_register(size_t size, caf_register_t type,
+		caf_token_t *token, gfc_descriptor_t *desc,
+		int *stat, char *errmsg, size_t errmsg_len);
 	void _gfortran_caf_deregister(caf_token_t *token, int *stat, char *errmsg,
 		size_t errmsg_len);
 
@@ -146,10 +212,12 @@ extern "C" {
 	// MPI_Fint _gfortran_caf_get_communicator(caf_team_t *);
 }
 
-void opencoarrays_caf_init() { _gfortran_caf_init(NULL, NULL); }
+void opencoarrays_caf_init(int *argc,char ***argv) {
+	_gfortran_caf_init(argc, argv);
+}
 
-void opencoarrays_sync_all(int *stat, char errmsg[], int unused) {
-	_gfortran_caf_sync_all(stat, errmsg, unused);
+void opencoarrays_sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0) {
+	_gfortran_caf_sync_all(stat, errmsg, errmsg_len);
 }
 
 // Halt the execution of all images
@@ -171,9 +239,8 @@ void opencoarrays_get(caf_token_t token, size_t offset, int image_index,
 }
 
 namespace coarraycpp {
-
 /* Links to the OpenCoarray Library */
-	void caf_init();
+	void caf_init(int *argc, char ***argv);
 
 	void caf_finalize();
 
@@ -187,7 +254,7 @@ namespace coarraycpp {
 	void error_stop(int32_t stop_code = -1);
 
 // Impose a global execution barrier
-	void sync_all(int *stat, char errmsg[], int unused);
+	void sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0);
 
 	template <class T>
 		class coarray {
@@ -197,12 +264,14 @@ namespace coarraycpp {
 			~coarray();
 			void operator=(data_type &value);
 			void operator=(coarray<T> &coarray);
-			// data_type get_from(int image_index);
+			data_type& get_from(int image_index);
+			size_t size;					// Either the byte size of the coarray or for lock and event types the nb of elements
+			caf_register_t type;			// The type of the coarray
+			caf_token_t token;				// ID of the coarray
+			gfc_descriptor_t descriptor;	// Descriptor of the coarray
+			int stat;						// Status of the coarray
+	}; // end of class coarray
 
-		private:
-			data_type Data;
-	};
-
-}  // namespace coarraycpp
+}  // end of namespace coarraycpp
 
 #endif
