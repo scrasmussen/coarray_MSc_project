@@ -2,9 +2,9 @@
 #include <string>
 #include "../coarray_cpp.h"
 
-main(int argc, char &argv){
+int main(int argc, char **argv){
   const int max_string = 100;
-  coarraycpp::coarray<char[max_string]> greeting;
+  coarraycpp::coarray<char[max_string]> greeting();
   int image;
   greeting = "Greetings from image " + std::to_string(coarraycpp::this_image()) +" of " + std::to_string(coarraycpp::num_images());
   coarraycpp::sync_all();
@@ -14,7 +14,7 @@ main(int argc, char &argv){
     }
     int max_single_digit=9;
     for(image = 2; std::min(coarraycpp::num_images(), max_single_digit); image++){
-      if ((greeting.get_from(image).find(1)) || (greeting.get_from(image).find(2)) || (greeting.get_from(image).find(3)) || (greeting.get_from(image).find(4)) || (greeting.get_from(image).find(5)) || (greeting.get_from(image).find(6)) || (greeting.get_from(image).find(7)) || (greeting.get_from(image).find(8)) || (greeting.get_from(image).find(9))){
+      if ((std::string(greeting.get_from(image)).find(1)) || (std::string(greeting.get_from(image)).find(2)) || (std::string(greeting.get_from(image)).find(3)) || (std::string(greeting.get_from(image)).find(4)) || (std::string(greeting.get_from(image)).find(5)) || (std::string(greeting.get_from(image)).find(6)) || (std::string(greeting.get_from(image)).find(7)) || (std::string(greeting.get_from(image)).find(8)) || (std::string(greeting.get_from(image)).find(9))){
         std::cout << "Test failed.";
         exit(1);
       }

@@ -4,7 +4,7 @@
 int coarraycpp::this_image(){
 	int image_num;
 	int ierr = MPI_Comm_rank(CACPP_COMM_WORLD, &image_num);
-	if (ierr != 0) coarraycpp::error_stop(-1);
+	if (ierr != 0) coarraycpp::error_stop(int32_t(-1));
 	return (image_num+1);
 }
 
@@ -12,7 +12,7 @@ int coarraycpp::this_image(){
 int coarraycpp::num_images(){
 	int num_image;
 	int ierr = MPI_Comm_size(CACPP_COMM_WORLD, &num_image);
-	if(ierr != 0) coarraycpp::error_stop(-1);
+	if(ierr != 0) coarraycpp::error_stop(int32_t(-1));
 	return num_image;
 }
 
@@ -40,15 +40,18 @@ template<class T>
 coarraycpp::coarray<T>::coarray(){
 	size_t errmsg_len;
 	char *errmsg;
+	this.token = new caf_token_t;
+	this.descriptor = new gfc_descriptor_t;
 	this.size = sizeof(T);
+	// Fixed value for proof of concept, will need to be dynamically selected in the future
 	this.type = CAF_REGTYPE_COARRAY_ALLOC;
 	_gfortran_caf_register(this.size, this.type, &this.token, &this.descriptor, &this.stat, errmsg, errmsg_len);
 }
 
-// template<class T>
-// void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>::data_type& value){
+template<class T>
+void coarraycpp::coarray<T>::operator=(T value){
 	
-// }
+}
 
 // template<class T>
 // void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>& coarray){
@@ -56,7 +59,7 @@ coarraycpp::coarray<T>::coarray(){
 // }
 
 template<class T>
-data_type& coarraycpp::coarray<T>::get_from(int image_index){
+T& coarraycpp::coarray<T>::get_from(int image_index){
 	caf_token_t token;
 	size_t offset;
 	gfc_descriptor_t src, dest;

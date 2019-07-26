@@ -262,14 +262,14 @@ namespace coarraycpp {
 			typedef T data_type;
 			coarray();
 			~coarray();
-			void operator=(data_type &value);
+			void operator=(T value);
 			void operator=(coarray<T> &coarray);
-			data_type& get_from(int image_index);
+			T& get_from(int image_index);
 			size_t size;					// Either the byte size of the coarray or for lock and event types the nb of elements
 			caf_register_t type;			// The type of the coarray
 			caf_token_t token;				// ID of the coarray
-			gfc_descriptor_t descriptor;	// Descriptor of the coarray
 			int stat;						// Status of the coarray
+			gfc_descriptor_t descriptor;	// Descriptor of the coarray
 	}; // end of class coarray
 
 }  // end of namespace coarraycpp
