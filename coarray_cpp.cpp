@@ -49,14 +49,19 @@ coarraycpp::coarray<T>::coarray(){
 }
 
 template<class T>
-void coarraycpp::coarray<T>::operator=(T value){
-	
+void coarraycpp::coarray<T>::operator=(const T& val) {
+	this.value = val;
 }
 
-// template<class T>
-// void coarraycpp::coarray<T>::operator=(coarraycpp::coarray<T>& coarray){
+template<class T>
+template<class U>
+void coarraycpp::coarray<T>::operator=(const U& val){
+	this.value = static_cast<T>(val);
+}
+template<class T>
+void T::operator=(const coarraycpp::coarray<T>& coarray){
 	
-// }
+}
 
 template<class T>
 T& coarraycpp::coarray<T>::get_from(int image_index){

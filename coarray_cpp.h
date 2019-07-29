@@ -212,25 +212,25 @@ extern "C" {
 	// MPI_Fint _gfortran_caf_get_communicator(caf_team_t *);
 }
 
-void opencoarrays_caf_init(int *argc,char ***argv) {
+inline void opencoarrays_caf_init(int *argc,char ***argv) {
 	_gfortran_caf_init(argc, argv);
 }
 
-void opencoarrays_sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0) {
+inline void opencoarrays_sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0) {
 	_gfortran_caf_sync_all(stat, errmsg, errmsg_len);
 }
 
 // Halt the execution of all images
-void opencoarrays_error_stop(int32_t stop_code = -1) {
+inline void opencoarrays_error_stop(int32_t stop_code = -1) {
 	_gfortran_caf_error_stop(stop_code);
 }
 
-void opencoarrays_co_broadcast(gfc_descriptor_t *a, int source_image, int *stat,
+inline void opencoarrays_co_broadcast(gfc_descriptor_t *a, int source_image, int *stat,
 	char *errmsg, size_t errmsg_len) {
 	_gfortran_caf_co_broadcast(a, source_image, stat, errmsg, errmsg_len);
 }
 
-void opencoarrays_get(caf_token_t token, size_t offset, int image_index,
+inline void opencoarrays_get(caf_token_t token, size_t offset, int image_index,
 	gfc_descriptor_t *src, caf_vector_t *src_vector,
 	gfc_descriptor_t *dest, int src_kind, int dst_kind,
 	bool may_require_tmp, int *stat) {
@@ -259,10 +259,12 @@ namespace coarraycpp {
 	template <class T>
 		class coarray {
 		public:
-			typedef T data_type;
+			T value;
 			coarray();
 			~coarray();
-			void operator=(T value);
+			void operator=(const T& value);
+			template<class U>
+			void operator=(const U& value);
 			void operator=(coarray<T> &coarray);
 			T& get_from(int image_index);
 			size_t size;					// Either the byte size of the coarray or for lock and event types the nb of elements
