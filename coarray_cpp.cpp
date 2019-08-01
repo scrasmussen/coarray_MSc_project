@@ -53,14 +53,20 @@ void coarraycpp::coarray<T>::operator=(const T& val) {
 	this.value = val;
 }
 
+// template<class T>
+// template<class U>
+// void coarraycpp::coarray<T>::operator=(const U& val){
+// 	this.value = static_cast<T>(val);
+// }
+
 template<class T>
-template<class U>
-void coarraycpp::coarray<T>::operator=(const U& val){
-	this.value = static_cast<T>(val);
+void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
+	this.value = coarray.get_value();
 }
+
 template<class T>
-void T::operator=(const coarraycpp::coarray<T>& coarray){
-	
+T coarraycpp::coarray<T>::get_value(){
+	return this.value;
 }
 
 template<class T>
@@ -73,6 +79,11 @@ T& coarraycpp::coarray<T>::get_from(int image_index){
 	bool may_require_tmp = true;
 	opencoarrays_get(token, offset,image_index,&src,&src_vector,&this.descriptor,src_kind ,dst_kind, may_require_tmp, this.stat);
 	return NULL;
+}
+
+template<class T>
+T coarraycpp::coarray<T>::operator[](void){
+	return this.value;
 }
 
 // int get_int(int src, int dest, int image_index, int* offset, bool mrt){

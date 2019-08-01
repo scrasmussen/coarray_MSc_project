@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <valarray>
 #include <vector>
 
 MPI_Comm CACPP_COMM_WORLD;
@@ -258,20 +259,20 @@ namespace coarraycpp {
 
 	template <class T>
 		class coarray {
-		public:
 			T value;
+		public:
 			coarray();
 			~coarray();
-			void operator=(const T& value);
-			template<class U>
-			void operator=(const U& value);
-			void operator=(coarray<T> &coarray);
-			T& get_from(int image_index);
 			size_t size;					// Either the byte size of the coarray or for lock and event types the nb of elements
 			caf_register_t type;			// The type of the coarray
 			caf_token_t token;				// ID of the coarray
 			int stat;						// Status of the coarray
-			gfc_descriptor_t descriptor;	// Descriptor of the coarray
+			void operator=(const T& value);
+			void operator=(coarray<T> &coarray);
+			T get_value();
+			T operator[](void);
+			T& get_from(int image_index);
+			gfc_descriptor_t descriptor;	// Descriptor of the coarray value
 	}; // end of class coarray
 
 }  // end of namespace coarraycpp
