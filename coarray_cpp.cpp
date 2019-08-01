@@ -51,6 +51,12 @@ coarraycpp::coarray<T>::coarray(){
 template<class T>
 void coarraycpp::coarray<T>::operator=(const T& val) {
 	this.value = val;
+	this.size = sizeof(T);
+	this.type = CAF_REGTYPE_COARRAY_ALLOC;
+	this.descriptor = new gfc_descriptor_t;
+	this.descriptor.
+	
+	this.token = new caf_token_t;
 }
 
 // template<class T>
@@ -62,6 +68,10 @@ void coarraycpp::coarray<T>::operator=(const T& val) {
 template<class T>
 void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
 	this.value = coarray.get_value();
+	this.descriptor = coarray.descriptor;
+	this.size = coarray.size;
+	this.type = coarray.type;
+	this.token = coarray.token;
 }
 
 template<class T>

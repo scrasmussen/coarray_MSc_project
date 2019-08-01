@@ -268,7 +268,7 @@ namespace coarraycpp {
 			caf_token_t token;				// ID of the coarray
 			int stat;						// Status of the coarray
 			void operator=(const T& value);
-			void operator=(coarray<T> &coarray);
+			void operator=(const oarray<T>& coarray);
 			T get_value();
 			T operator[](void);
 			T& get_from(int image_index);
