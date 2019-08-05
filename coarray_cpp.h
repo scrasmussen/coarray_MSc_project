@@ -268,10 +268,10 @@ namespace coarraycpp {
 			caf_token_t token;				// ID of the coarray
 			int stat;						// Status of the coarray
 			void operator=(const T& value);
-			void operator=(const oarray<T>& coarray);
+			void operator=(const coarray<T>& coarray);
 			T get_value();
-			T operator[](void);
-			T& get_from(int image_index);
+			T operator[](char);
+			T get_from(int image_index);
 			gfc_descriptor_t descriptor;	// Descriptor of the coarray value
 	}; // end of class coarray
 

@@ -3,7 +3,7 @@ MPICC=mpich
 LIBFILE=/lib/libcaf_mpi.so
 CPPLIBFILE=coarray_cpp.cpp
 WORKDIR=/home/jerome/coarray_MSc_project
-SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_multiverse.cpp
+SRCFILE=/home/jerome/coarray_MSc_project/C++_Test_Cases/hello_world.cpp
 
 # run `mpic++ -show` and enter that result, minus the g++
 MPIOPT=-I/opt/mpich/include -L/opt/mpich/lib -lmpicxx -Wl,-rpath -Wl,/opt/mpich/lib -Wl,--enable-new-dtags -lmpi
@@ -13,7 +13,7 @@ COPT=/lib
 default: all
 
 all: libcoarray_cpp.so preprocess
-	${CC} -g -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp -lcaf_mpi
+	${CC} -g -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp -lcaf_mpi ${MPIOPT}
 
 preprocess:
 	rm -f ${SRCFILE}.tmp
