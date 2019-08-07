@@ -38,9 +38,13 @@ void coarraycpp::sync_all(int *stat, char errmsg[], size_t errmsg_len){
 
 template<class T>
 coarraycpp::coarray<T>::coarray(){
-	size_t errmsg_len;
-	char *errmsg;
-	this->token = new caf_token_t;
+	if(CACPP_COMM_WORLD != -1){
+		coarraycpp::caf_init(NULL,NULL);
+		MPI_Comm_rank(CACPP_COMM_WORLD,&this->Rank);
+	}
+	size_t errmsg_len = 0;
+	char *errmsg = NULL;
+	//this->token = new caf_token_t;
 	this->descriptor.base_addr = NULL;
 	this->descriptor.offset = 0;
 	this->descriptor.dtype.elem_len = sizeof(T);
@@ -74,7 +78,6 @@ void coarraycpp::coarray<T>::operator=(const T& val) {
 	this->descriptor.dim[0]._stride = 1;
 	this->descriptor.dim[0].lower_bound = 0;
 	this->descriptor.dim[0]._ubound = 0;
-	this->token = new caf_token_t;
 }
 
 // template<class T>
@@ -99,8 +102,13 @@ T coarraycpp::coarray<T>::get_value(){
 
 template<class T>
 T coarraycpp::coarray<T>::get_from(int image_index){
+	if(image_index == coarraycpp::this_image()) 
+		return this->value; // if the call is from this_image() to this_image()
 	int src_kind = 5, dst_kind = 5;
+	this->token = new caf_token_t;
+	T foreign_value;
 	gfc_descriptor_t descriptor;
+	descriptor.base_addr = &foreign_value;
 	descriptor.offset = 0;
 	descriptor.dtype.elem_len = sizeof(T);
 	descriptor.dtype.version = 0;
@@ -112,8 +120,8 @@ T coarraycpp::coarray<T>::get_from(int image_index){
 	descriptor.dim[0].lower_bound = 0;
 	descriptor.dim[0]._ubound = 0;
 	bool may_require_tmp = true;
-	opencoarrays_get(this->token, descriptor.offset,image_index,&descriptor,NULL,&descriptor,src_kind ,dst_kind, may_require_tmp, &this->stat);
-	return *(T *)descriptor.base_addr;
+	opencoarrays_get(this->token, descriptor.offset,image_index,&descriptor,NULL,&descriptor,src_kind ,dst_kind, may_require_tmp, NULL);
+	return foreign_value;
 }
 
 template<class T>
@@ -123,7 +131,11 @@ T coarraycpp::coarray<T>::operator[](char){
 
 template<class T>
 coarraycpp::coarray<T>::~coarray(){
-	// Compilermindblower
+	// int stat;
+	// char errmsg;
+	// size_t errmsg_len = 0;
+	// _gfortran_caf_deregister(&this ->token, &stat, &errmsg, errmsg_len);
+	// _gfortran_caf_finalize();
 }
 
 // int get_int(int src, int dest, int image_index, int* offset, bool mrt){

@@ -9,8 +9,8 @@ int main(int argc, char **argv){
   greeting = coarraycpp::this_image();
   coarraycpp::sync_all();
   if ( coarraycpp::this_image()==1){
-    for(image = 1; image < coarraycpp::num_images(); image++){
-      std::cout << "hello form image " << greeting.get_from(image) << "of " << coarraycpp::num_images() << std::endl;
+    for(image = 1; image < coarraycpp::num_images() + 1 ; image++){
+      std::cout << "I am image " << coarraycpp::this_image() << " and I just received a hello from image " << greeting.get_from(image) << " of " << coarraycpp::num_images() << "! =D" <<std::endl;
     }
     int max_single_digit=9;
     for(image = 2; std::min(coarraycpp::num_images(), max_single_digit); image++){

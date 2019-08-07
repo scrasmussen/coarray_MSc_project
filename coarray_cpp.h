@@ -260,6 +260,7 @@ namespace coarraycpp {
 	template <class T>
 		class coarray {
 			T value;
+			int Rank = -1;
 		public:
 			coarray();
 			~coarray();
