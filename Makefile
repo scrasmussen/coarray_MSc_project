@@ -1,5 +1,5 @@
 CC=g++
-MPICC=mpich
+MPICC=mpicxx
 LIBFILE=/lib/libcaf_mpi.so
 CPPLIBFILE=coarray_cpp.cpp
 WORKDIR=/home/jerome/coarray_MSc_project
@@ -13,7 +13,7 @@ COPT=/lib
 default: all
 
 all: libcoarray_cpp.so preprocess
-	${CC} -g -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp -lcaf_mpi ${MPIOPT}
+	${MPICC} -g -Wall -Wextra -pedantic -o RunMe ${SRCFILE} -L${WORKDIR} -lcoarray_cpp -lcaf_mpi ${MPIOPT}
 
 preprocess:
 	rm -f ${SRCFILE}.tmp
@@ -26,12 +26,15 @@ clean:
 	rm -rf *.o RunMe
 
 libcoarray_cpp.so: coarray_cpp.o
-	${CC} -g -shared coarray_cpp.o -L/lib -lcaf_mpi -o libcoarray_cpp.so
+	${MPICC} -g -shared coarray_cpp.o -L/lib -lcaf_mpi -o libcoarray_cpp.so ${MPIOPT}
 
 coarray_cpp.o: ${CPPLIBFILE}
-	${CC} -c -Wall -g -pedantic -fPIC ${CPPLIBFILE} -o coarray_cpp.o
+	${MPICC} -c -Wall -g -pedantic -fPIC ${CPPLIBFILE} -o coarray_cpp.o ${MPIOPT}
 
 cleanlib:
 	rm -rf *.o *.so
 
-cleanall: clean cleanlib
+cleancallgrind:
+	rm callgrind.*
+
+cleanall: clean cleanlib cleancallgrind

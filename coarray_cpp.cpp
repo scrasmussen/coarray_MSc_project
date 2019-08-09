@@ -31,13 +31,16 @@ void coarraycpp::error_stop(int32_t stop_code){
 
 // Impose a global execution barrier
 void coarraycpp::sync_all(int *stat, char errmsg[], size_t errmsg_len){
+	std::cout << "!!! Image " << coarraycpp::this_image() << " Entering Sync !!" << std::endl;
 	opencoarrays_sync_all(stat, errmsg, errmsg_len);
+	std::cout << "||| Image " << coarraycpp::this_image() << " Leaving Sync !!" << std::endl;
 }
 
 /* ############## COARRAY CLASS ############## */
 
 template<class T>
 coarraycpp::coarray<T>::coarray(){
+	std::cout << " ## Entering coarray creation" << std::endl; //DEBUG
 	if(CACPP_COMM_WORLD != -1){
 		coarraycpp::caf_init(NULL,NULL);
 		MPI_Comm_rank(CACPP_COMM_WORLD,&this->Rank);
@@ -60,6 +63,9 @@ coarraycpp::coarray<T>::coarray(){
 	// Fixed value for proof of concept, will need to be dynamically selected in the future
 	this->type = CAF_REGTYPE_COARRAY_ALLOC;
 	_gfortran_caf_register(this->size, this->type, &this->token, &this->descriptor, &this->stat, errmsg, errmsg_len);
+	// Check if token is a good MPI_Win
+	// check token manipulations
+	std::cout << " ## image : " << coarraycpp::this_image() << " token : " << this->token << std::endl; //DEBUG
 }
 
 template<class T>
@@ -102,7 +108,8 @@ T coarraycpp::coarray<T>::get_value(){
 
 template<class T>
 T coarraycpp::coarray<T>::get_from(int image_index){
-	if(image_index == coarraycpp::this_image()) 
+	std::cout << std::endl << " ## Entering Get_from image : " << coarraycpp::this_image() << " token: " << this->token << std::endl; //DEBUG
+	if(image_index == coarraycpp::this_image())
 		return this->value; // if the call is from this_image() to this_image()
 	int src_kind = 5, dst_kind = 5;
 	this->token = new caf_token_t;

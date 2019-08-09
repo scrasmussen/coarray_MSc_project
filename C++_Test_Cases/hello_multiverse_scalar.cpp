@@ -5,6 +5,7 @@
 
 int main(int argc, char **argv){
   coarraycpp::coarray<int> greeting;
+  std::cout << std::endl << " ## image : " << coarraycpp::this_image() << " token : " << greeting.token << std::endl; //DEBUG
   int image;
   greeting = coarraycpp::this_image();
   coarraycpp::sync_all();
