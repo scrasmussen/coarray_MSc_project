@@ -47,7 +47,6 @@ coarraycpp::coarray<T>::coarray(){
 	}
 	size_t errmsg_len = 0;
 	char *errmsg = NULL;
-	//this->token = new caf_token_t;
 	this->descriptor.base_addr = NULL;
 	this->descriptor.offset = 0;
 	this->descriptor.dtype.elem_len = sizeof(T);
@@ -112,7 +111,6 @@ T coarraycpp::coarray<T>::get_from(int image_index){
 	if(image_index == coarraycpp::this_image())
 		return this->value; // if the call is from this_image() to this_image()
 	int src_kind = 5, dst_kind = 5;
-	this->token = new caf_token_t;
 	T foreign_value;
 	gfc_descriptor_t descriptor;
 	descriptor.base_addr = &foreign_value;

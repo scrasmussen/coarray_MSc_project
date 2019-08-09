@@ -35,6 +35,6 @@ cleanlib:
 	rm -rf *.o *.so
 
 cleancallgrind:
-	rm callgrind.*
+	rm -f callgrind.* valgrind.*
 
 cleanall: clean cleanlib cleancallgrind
