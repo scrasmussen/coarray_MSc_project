@@ -5,8 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <valarray>
-#include <vector>
+
 /**
  * Internal MPI_Communicator for use by the C++ layer
  * 
@@ -219,16 +218,16 @@ extern "C" {
 	void _gfortran_caf_deregister(caf_token_t *token,caf_deregister_t type, int *stat, char *errmsg,
 		size_t errmsg_len);
 	
-	/**
-	 * @brief      Used to query the coarray library whether an allocatable component in a derived type coarray is allocated on a remote image.
-	 *
-	 * @param[in]  token        The token identifying the coarray
-	 * @param[in]  image_index  The remote image index
-	 * @param      ref          A chain of references to address the allocatable or pointer component in the derived type coarray. The object reference needs to be a scalar or a full array reference, respectively.
-	 * 
-	 * @author     OpenCoarrays
-	 */
-	void _gfortran_caf_is_present(caf_token_t token, int image_index, gfc_reference_t *ref);
+	// *
+	//  * @brief      Used to query the coarray library whether an allocatable component in a derived type coarray is allocated on a remote image.
+	//  *
+	//  * @param[in]  token        The token identifying the coarray
+	//  * @param[in]  image_index  The remote image index
+	//  * @param      ref          A chain of references to address the allocatable or pointer component in the derived type coarray. The object reference needs to be a scalar or a full array reference, respectively.
+	//  * 
+	//  * @author     OpenCoarrays
+	 
+	// void _gfortran_caf_is_present(caf_token_t token, int image_index, gfc_reference_t *ref);
 
 	/**
 	 * @brief      Called to send a scalar, an array section or a whole array from a local to a remote image identified by the image_index.
@@ -680,7 +679,7 @@ inline void opencoarrays_caf_init(int *argc,char ***argv) {
  * 
  * @author     Jerome LEKIEFFRE
  */
-inline void opencoarrays_sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0) {
+inline void opencoarrays_sync_all(int *stat, char errmsg[], size_t errmsg_len) {
 	_gfortran_caf_sync_all(stat, errmsg, errmsg_len);
 }
 
@@ -793,7 +792,7 @@ namespace coarraycpp {
 	 * 
 	 * @author     Jerome LEKIEFFRE
 	 */
-	void sync_all(int *stat, char errmsg[], size_t errmsg_len);
+	void sync_all(int *stat = NULL, char errmsg[] = NULL, size_t errmsg_len = 0);
 
 	/**
 	 * @brief      Class for coarray Object.

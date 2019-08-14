@@ -148,7 +148,8 @@ template<class T>
 coarraycpp::coarray<T>::~coarray(){
 	char errmsg;
 	size_t errmsg_len = 0;
-	_gfortran_caf_deregister(&this->token, &this->stat, &errmsg, errmsg_len);
+	caf_deregister_t deregtype=CAF_DEREGTYPE_COARRAY_DEREGISTER;
+	_gfortran_caf_deregister(&this->token, deregtype, &this->stat, &errmsg, errmsg_len);
 	_gfortran_caf_finalize();
 }
 

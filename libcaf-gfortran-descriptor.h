@@ -39,35 +39,106 @@ enum
   BT_ASSUMED
 };
 
+/**
+ * Allows describing each Rank of an Array
+ */
 typedef struct descriptor_dimension
 {
+    /**
+   * Nb of elements skipped to increment the index of the current rank
+   * 
+   * @author     GFortran
+   */
   ptrdiff_t _stride;
+    
+    /**
+   * Lower index
+   * 
+   * @author     GFortran
+   */
   ptrdiff_t lower_bound;
+
+    /**
+   * Upper index
+   * 
+   * @author     GFortran
+   */
   ptrdiff_t _ubound;
 }
 descriptor_dimension;
 
 #ifdef GCC_GE_8
+/**
+ * Structure to store the rank of the array, the element type and the size of the element type
+ * 
+ * @author     GFortran
+ */
   typedef struct dtype_type
   {
+        /**
+     * Number of elements in the Array
+     * 
+     * @author     GFortran
+     */
     size_t elem_len;
     int version;
+
+
+        /**
+     * the rank of the array
+     * 
+     * @author     GFortran
+     */
     signed char rank;
+    
+    /**
+     * Type of elements in the Array
+     * 
+     * @author     GFortran
+     */
     signed char type;
     signed short attribute;
   }
   dtype_type;
 #endif
 
+/**
+ * GFortran array descriptor
+ * 
+ * @author     GFortran
+ */
 typedef struct gfc_descriptor_t {
+    /**
+   * Adress where the array is stored
+   */
   void *base_addr;
+
+    /**
+   * Compensation for a non-zero first index
+   * 
+   * @author     GFortran
+   */
   size_t offset;
 #ifdef GCC_GE_8
+
+    /**
+   * Stores the rank of the array and data obout the type of elements
+   * 
+   * @author     GFortran
+   */
   dtype_type dtype;
+
+
   ptrdiff_t span;
 #else
   ptrdiff_t dtype;
 #endif
+
+    /**
+   * Description of each rank of the array
+   * 
+   * @author     GFortran
+   */
   descriptor_dimension dim[];
 } gfc_descriptor_t;
 
