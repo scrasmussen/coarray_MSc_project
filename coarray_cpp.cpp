@@ -22,7 +22,7 @@ void coarraycpp::caf_init(int *argc, char ***argv){
 }
 
 
-void coarraycpp::caf_finalize(){ _gfortran_caf_finalize(); }
+inline void coarraycpp::caf_finalize(){ _gfortran_caf_finalize(); }
 
 // Halt the execution of all images
 void coarraycpp::error_stop(int32_t stop_code){
@@ -31,19 +31,15 @@ void coarraycpp::error_stop(int32_t stop_code){
 
 // Impose a global execution barrier
 void coarraycpp::sync_all(int *stat, char errmsg[], size_t errmsg_len){
-	std::cout << "!!! Image " << coarraycpp::this_image() << " Entering Sync !!" << std::endl;
 	opencoarrays_sync_all(stat, errmsg, errmsg_len);
-	std::cout << "||| Image " << coarraycpp::this_image() << " Leaving Sync !!" << std::endl;
 }
 
 /* ############## COARRAY CLASS ############## */
 
 template<class T>
 coarraycpp::coarray<T>::coarray(){
-	std::cout << " ## Entering coarray creation" << std::endl; //DEBUG
-	if(CACPP_COMM_WORLD != -1){
+	if(CACPP_COMM_WORLD == -1){
 		coarraycpp::caf_init(NULL,NULL);
-		MPI_Comm_rank(CACPP_COMM_WORLD,&this->Rank);
 	}
 	size_t errmsg_len = 0;
 	char *errmsg = NULL;
@@ -64,7 +60,6 @@ coarraycpp::coarray<T>::coarray(){
 	_gfortran_caf_register(this->size, this->type, &this->token, &this->descriptor, &this->stat, errmsg, errmsg_len);
 	// Check if token is a good MPI_Win
 	// check token manipulations
-	std::cout << " ## image : " << coarraycpp::this_image() << " token : " << this->token << std::endl; //DEBUG
 }
 
 template<class T>
@@ -98,6 +93,7 @@ void coarraycpp::coarray<T>::operator=(const coarraycpp::coarray<T>& coarray){
 	this->size = coarray.size;
 	this->type = coarray.type;
 	this->token = coarray.token;
+	std::cout << std::endl << " ## Image : " << coarraycpp::this_image() << " Address: " << this->descriptor.base_addr << std::endl; //DEBUG
 }
 
 template<class T>
@@ -107,40 +103,53 @@ T coarraycpp::coarray<T>::get_value(){
 
 template<class T>
 T coarraycpp::coarray<T>::get_from(int image_index){
-	std::cout << std::endl << " ## Entering Get_from image : " << coarraycpp::this_image() << " token: " << this->token << std::endl; //DEBUG
 	if(image_index == coarraycpp::this_image())
 		return this->value; // if the call is from this_image() to this_image()
-	int src_kind = 5, dst_kind = 5;
-	T foreign_value;
-	gfc_descriptor_t descriptor;
-	descriptor.base_addr = &foreign_value;
-	descriptor.offset = 0;
-	descriptor.dtype.elem_len = sizeof(T);
-	descriptor.dtype.version = 0;
-	descriptor.dtype.rank = 0;
-	descriptor.dtype.type = 5;
-	descriptor.dtype.attribute = 0;
-	descriptor.span = 1;
-	descriptor.dim[0]._stride = 1;
-	descriptor.dim[0].lower_bound = 0;
-	descriptor.dim[0]._ubound = 0;
+	int src_kind = 1, dst_kind = 1;
+	gfc_descriptor_t descriptorsrc;
+	descriptorsrc.base_addr = new T[1];
+	descriptorsrc.offset = 0;
+	descriptorsrc.dtype.elem_len = sizeof(T);
+	descriptorsrc.dtype.version = 0;
+	descriptorsrc.dtype.rank = 1;
+	descriptorsrc.dtype.type = 5;
+	descriptorsrc.dtype.attribute = 0;
+	descriptorsrc.span = 1;
+	descriptorsrc.dim[0]._stride = 1;
+	descriptorsrc.dim[0].lower_bound = 0;
+	descriptorsrc.dim[0]._ubound = 0;
+	gfc_descriptor_t descriptordest;
+	descriptordest.base_addr = new T[1];
+	descriptordest.offset = 0;
+	descriptordest.dtype.elem_len = sizeof(T);
+	descriptordest.dtype.version = 0;
+	descriptordest.dtype.rank = 1;
+	descriptordest.dtype.type = 5;
+	descriptordest.dtype.attribute = 0;
+	descriptordest.span = 1;
+	descriptordest.dim[0]._stride = 1;
+	descriptordest.dim[0].lower_bound = 0;
+	descriptordest.dim[0]._ubound = 0;
 	bool may_require_tmp = true;
-	opencoarrays_get(this->token, descriptor.offset,image_index,&descriptor,NULL,&descriptor,src_kind ,dst_kind, may_require_tmp, NULL);
-	return foreign_value;
+	std::cout << "Ho hello" << std::endl;
+	opencoarrays_get(this->token, descriptorsrc.offset,image_index,&descriptorsrc,NULL,&descriptordest,src_kind ,dst_kind, may_require_tmp, NULL);
+	std::cout << "Ho hello again" << std::endl;
+	T val = *(T *)descriptordest.base_addr;
+	std::cout << "Received value = " << val << std::endl;
+	return val;
 }
 
-template<class T>
-T coarraycpp::coarray<T>::operator[](char){
-	return this->value;
-}
+// template<class T>
+// T coarraycpp::coarray<T>::operator[](char){
+// 	return this->value;
+// }
 
 template<class T>
 coarraycpp::coarray<T>::~coarray(){
-	// int stat;
-	// char errmsg;
-	// size_t errmsg_len = 0;
-	// _gfortran_caf_deregister(&this ->token, &stat, &errmsg, errmsg_len);
-	// _gfortran_caf_finalize();
+	char errmsg;
+	size_t errmsg_len = 0;
+	_gfortran_caf_deregister(&this->token, &this->stat, &errmsg, errmsg_len);
+	_gfortran_caf_finalize();
 }
 
 // int get_int(int src, int dest, int image_index, int* offset, bool mrt){

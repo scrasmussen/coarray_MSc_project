@@ -5,10 +5,11 @@
 
 int main(int argc, char **argv){
   coarraycpp::coarray<int> greeting;
-  std::cout << std::endl << " ## image : " << coarraycpp::this_image() << " token : " << greeting.token << std::endl; //DEBUG
+
   int image;
   greeting = coarraycpp::this_image();
   coarraycpp::sync_all();
+  if ( coarraycpp::this_image() == 2) std::cout << "Image 2 value" << *(int *)greeting.descriptor.base_addr << std::endl;
   if ( coarraycpp::this_image()==1){
     for(image = 1; image < coarraycpp::num_images() + 1 ; image++){
       std::cout << "I am image " << coarraycpp::this_image() << " and I just received a hello from image " << greeting.get_from(image) << " of " << coarraycpp::num_images() << "! =D" <<std::endl;
